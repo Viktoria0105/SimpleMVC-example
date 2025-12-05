@@ -5,7 +5,7 @@ $User = Config::getObject('core.user.class');
 ?>
 <?php include('includes/admin-users-nav.php'); ?>
 
-<h2>Список пользователей</h2> 
+<h2>Список пользователей (<?= $totalUsersCount ?? '' ?>)</h2> 
     
 <?php if (!empty($users)): ?>
 <table class="table">

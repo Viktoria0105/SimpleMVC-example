@@ -32,6 +32,11 @@ class AdminusersController extends \ItForFree\SimpleMVC\MVC\Controller
             
             $users = $Adminusers->getList()['results'];
             $this->view->addVar('users', $users);
+            
+            //Подсчет и передача общего количества пользователей
+            $totalUsersCount = count($users);
+            $this->view->addVar('totalUsersCount', $totalUsersCount);
+            
             $this->view->render('user/index.php');
         }
     }
