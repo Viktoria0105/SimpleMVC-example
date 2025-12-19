@@ -15,5 +15,7 @@ SimpleAssetManager::printCss();
       
     </div>
 </div>
+
+<script src="/JS/ajax/oldAjax.js"></script>
     
 </head>

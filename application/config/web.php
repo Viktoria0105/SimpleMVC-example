@@ -4,6 +4,10 @@
  */
 $config = [
     'core' => [ // подмассив используемый самим ядром фреймворка
+        'url' => [ // подсистема работы с URL
+            'class' => \ItForFree\SimpleMVC\Url::class,
+            'alias' => '@url'
+        ],
         'db' => [
             'dns' => 'mysql:host=localhost;dbname=dbname',
             'username' => 'root',
@@ -11,7 +15,8 @@ $config = [
         ],
         'router' => [ // подсистема маршрутизация
             'class' => \ItForFree\SimpleMVC\Router\WebRouter::class,
-	    'alias' => '@router'
+            'alias' => '@router',
+            'routes' => require 'routes.php' // ← ДОБАВЬТЕ ЭТУ СТРОКУ
         ],
         'mvc' => [ // настройки MVC
             'views' => [
@@ -23,13 +28,13 @@ $config = [
         ],
         'handlers' => [ // подсистема перехвата исключений
             'ItForFree\SimpleMVC\Exceptions\SmvcAccessException' 
-		=> \application\handlers\UserExceptionHandler::class,
+                => \application\handlers\UserExceptionHandler::class,
             'ItForFree\SimpleMVC\Exceptions\SmvcRoutingException' 
-		=> \application\handlers\UserExceptionHandler::class
+                => \application\handlers\UserExceptionHandler::class
         ],
         'user' => [ // подсистема авторизации
             'class' => \application\models\AuthUser::class,
-	    'construct' => [
+            'construct' => [
                 'session' => '@session',
                 'router' => '@router'
              ], 

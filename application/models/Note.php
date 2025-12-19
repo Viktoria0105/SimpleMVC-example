@@ -8,7 +8,7 @@ namespace application\models;
 
 class Note extends BaseExampleModel {
     
-    public string $tableName = "notes";
+    public string $tableName = "articles";
     
     public string $orderBy = 'publicationDate ASC';
     

@@ -14,7 +14,7 @@ class CustomCSSAsset extends SimpleAsset {
     public $basePath = '/';
     
     public $css = [
-        'CSS/style.css'
+        'CSS/old_style.css'
     ];
     
     public $needs = [    
