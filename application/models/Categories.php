@@ -1,63 +1,88 @@
 <?php
 
-
 namespace application\models;
 
-
-use ItForFree\SimpleMVC\mvc\Model;
+use ItForFree\SimpleMVC\MVC\Model;
 
 class Categories extends BaseExampleModel
 {
     // Свойства
+    public string $tableName = "categories";
+    
+    public string $orderBy = 'id ASC';
+    
     /**
      * @var int ID категории из базы данных
      */
     public ?int $id = null;
+    
     /**
      * @var string Название категории
      */
     public $name = null;
+    
     /**
-     * @var string Короткое описание категории
+     * @var string Описание категории
      */
     public $description = null;
-    /**
-     * @var string Имя обрабатываемой таблицы
-     */
-    public string $tableName = 'categories';
-    /**
-     *  @var string Имя поля по котору сортируем
-     */
-    public string $orderBy = 'id ASC';
 
     /**
-     * Возвращает список категорий
+     * Получает список категорий
      */
-    public function getList(int $numRows = 1000000): array
+    public function getList(int $numRows = 1000000, $params = []) : array
     {
-        $query = "SELECT SQL_CALC_FOUND_ROWS * FROM categories
-                  ORDER BY id ASC LIMIT :numRows";
+        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM $this->tableName";
         
-        $st = $this->pdo->prepare($query);
+        $sql .= " ORDER BY $this->orderBy LIMIT :numRows";
+
+        $modelClassName = static::class;
+        
+        $st = $this->pdo->prepare($sql);
         $st->bindValue(":numRows", $numRows, \PDO::PARAM_INT);
         $st->execute();
-        
         $list = array();
-        
+
         while ($row = $st->fetch()) {
-            $category = new Categories();
-            $category->id = $row['id'];
-            $category->name = $row['name'];
-            $category->description = $row['description'];
-            $list[] = $category;
+            $example = new $modelClassName($row);
+            $list[] = $example;
         }
+
+        $sql = "SELECT FOUND_ROWS() AS totalRows";
+        $totalRows = $this->pdo->query($sql)->fetch();
+        return array("results" => $list, "totalRows" => $totalRows[0]);
+    }
+    
+    /**
+     * Вставка новой категории
+     */
+    public function insert()
+    {
+        $sql = "INSERT INTO $this->tableName (name, description) 
+                VALUES (:name, :description)"; 
         
-        // Получаем общее количество строк
-        $totalRows = $this->pdo->query("SELECT FOUND_ROWS()")->fetch();
+        $st = $this->pdo->prepare($sql);
+        $st->bindValue(":name", $this->name, \PDO::PARAM_STR);
+        $st->bindValue(":description", $this->description, \PDO::PARAM_STR);
         
-        return array(
-            "results" => $list,
-            "totalRows" => $totalRows[0]
-        );
+        $st->execute();
+        $this->id = $this->pdo->lastInsertId();
+    }
+    
+    /**
+     * Обновление существующей категории
+     */
+    public function update()
+    {
+        $sql = "UPDATE $this->tableName SET 
+                name = :name, 
+                description = :description
+                WHERE id = :id";  
+        
+        $st = $this->pdo->prepare($sql);
+        $st->bindValue(":name", $this->name, \PDO::PARAM_STR);
+        $st->bindValue(":description", $this->description, \PDO::PARAM_STR);
+        $st->bindValue(":id", $this->id, \PDO::PARAM_INT);
+        
+        $st->execute();
     }
 }

@@ -36,6 +36,12 @@ $User = Config::getObject('core.user.class');
             <a class="nav-link" href="<?= WebRouter::link("admin/articles/index") ?>"> Статьи </a>
         </li>
         <?php endif; ?>
+
+        <?php  if ($User->isAllowed("admin/categories/index")): ?>
+        <li class="nav-item ">
+            <a class="nav-link" href="<?= WebRouter::link("admin/categories/index") ?>"> Категории </a>
+        </li>
+        <?php endif; ?>
         
         <?php  if ($User->isAllowed("login/logout")): ?>
         <li class="nav-item ">
